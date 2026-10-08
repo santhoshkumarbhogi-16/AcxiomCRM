@@ -1,0 +1,33 @@
+@model IEnumerable<AcxiomCRM.Models.AuditLog>
+@{
+    ViewData["Title"] = "Audit log";
+}
+
+<div class="page-heading">
+    <div><div class="eyebrow">SECURITY & COMPLIANCE</div><h1 class="h3 mb-1">Audit log</h1><p class="text-muted mb-0">Append-only history of authentication and business changes.</p></div>
+</div>
+<div class="card mb-3"><div class="card-body">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-2"><label for="action" class="form-label">Action</label><select id="action" name="action" class="form-select"><option value="">All actions</option>@foreach (var value in (IEnumerable<string>)ViewBag.Actions){<option value="@value" selected="@(ViewBag.Action == value)">@value</option>}</select></div>
+        <div class="col-md-2"><label for="entity" class="form-label">Module</label><select id="entity" name="entity" class="form-select"><option value="">All modules</option>@foreach (var value in (IEnumerable<string>)ViewBag.Entities){<option value="@value" selected="@(ViewBag.Entity == value)">@value</option>}</select></div>
+        <div class="col-md-3"><label for="userId" class="form-label">User</label><select id="userId" name="userId" class="form-select"><option value="">All users</option>@foreach (var user in (IEnumerable<dynamic>)ViewBag.Users){<option value="@user.Id" selected="@(ViewBag.UserId == user.Id)">@user.Email</option>}</select></div>
+        <div class="col-md-2"><label for="from" class="form-label">From</label><input id="from" name="from" type="date" value="@ViewBag.From" class="form-control" /></div>
+        <div class="col-md-2"><label for="to" class="form-label">To</label><input id="to" name="to" type="date" value="@ViewBag.To" class="form-control" /></div>
+        <div class="col-auto"><button class="btn btn-outline-primary">Filter</button></div>
+    </form>
+</div></div>
+<div class="card"><div class="table-responsive"><table class="table table-hover mb-0">
+    <thead><tr><th>Timestamp</th><th>User ID</th><th>Action</th><th>Module</th><th>Record</th><th>Details</th><th>IP address</th></tr></thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr><td class="text-nowrap">@item.CreatedDate.ToLocalTime().ToString("dd MMM yyyy, h:mm:ss tt")</td><td><small>@item.UserId</small></td><td>@item.Action</td><td>@item.EntityName</td><td>@item.RecordId</td><td><small>@item.OldValue @if (!string.IsNullOrEmpty(item.OldValue) && !string.IsNullOrEmpty(item.NewValue)){<span>→</span>} @item.NewValue</small></td><td>@item.IpAddress</td></tr>
+    }
+    @if (!Model.Any())
+    {
+        <tr><td colspan="7"><div class="empty-state">No audit events match these filters.</div></td></tr>
+    }
+    </tbody>
+</table></div>
+@await Html.PartialAsync("_Pagination")
+</div>

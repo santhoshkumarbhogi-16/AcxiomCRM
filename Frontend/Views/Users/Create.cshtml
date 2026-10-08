@@ -1,0 +1,18 @@
+@{
+    ViewData["Title"] = "Create user";
+}
+
+<div class="page-heading">
+    <div><div class="eyebrow">ADMINISTRATION</div><h1 class="h3 mb-1">Create user</h1><p class="text-muted mb-0">Set up an account and assign one primary role.</p></div>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to users</a>
+</div>
+<div class="card form-card"><div class="card-body p-4">
+    <div asp-validation-summary="All" class="alert alert-danger"></div>
+    <form method="post" class="row g-3">
+        <div class="col-md-6"><label for="fullName" class="form-label">Full name</label><input id="fullName" name="fullName" class="form-control" maxlength="100" required /><span class="field-validation">@Html.ValidationMessage("fullName")</span></div>
+        <div class="col-md-6"><label for="email" class="form-label">Email</label><input id="email" name="email" class="form-control" type="email" maxlength="150" required /><span class="field-validation">@Html.ValidationMessage("email")</span></div>
+        <div class="col-md-6"><label for="password" class="form-label">Temporary password</label><input id="password" name="password" class="form-control" type="password" autocomplete="new-password" required /><small class="text-muted">Must meet the configured Identity password policy.</small><span class="field-validation">@Html.ValidationMessage("password")</span></div>
+        <div class="col-md-6"><label for="role" class="form-label">Primary role</label><select id="role" name="role" class="form-select" required><option value="SalesExecutive">Sales Executive</option><option value="Manager">Manager</option><option value="Admin">Admin</option></select><span class="field-validation">@Html.ValidationMessage("role")</span></div>
+        <div class="col-12"><button class="btn btn-primary">Create account</button> <a asp-action="Index" class="btn btn-light">Cancel</a></div>
+    </form>
+</div></div>

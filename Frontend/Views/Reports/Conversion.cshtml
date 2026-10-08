@@ -1,0 +1,35 @@
+@model AcxiomCRM.ViewModels.ConversionReportViewModel
+@{
+    ViewData["Title"] = "Lead conversion report";
+}
+
+<div class="page-heading">
+    <div><div class="eyebrow">INSIGHTS</div><h1 class="h3 mb-1">Lead conversion</h1><p class="text-muted mb-0">Compare converted leads with all leads in your authorized scope.</p></div>
+    <div class="d-flex gap-2">
+        <a asp-action="Conversion" asp-route-from="@Model.From?.ToString("yyyy-MM-dd")" asp-route-to="@Model.To?.ToString("yyyy-MM-dd")" asp-route-csv="true" class="btn btn-outline-secondary"><i class="bi bi-download"></i> Export CSV</a>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to reports</a>
+    </div>
+</div>
+<div class="card mb-3"><div class="card-body">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-3"><label for="from" class="form-label">Created from</label><input id="from" name="from" type="date" value="@Model.From?.ToString("yyyy-MM-dd")" class="form-control" /></div>
+        <div class="col-md-3"><label for="to" class="form-label">Created to</label><input id="to" name="to" type="date" value="@Model.To?.ToString("yyyy-MM-dd")" class="form-control" /></div>
+        <div class="col-auto"><button class="btn btn-primary">Apply filters</button></div>
+    </form>
+</div></div>
+<div class="row g-3 mb-3">
+    <div class="col-sm-6 col-xl-3"><div class="card metric-card"><div class="card-body"><div class="metric-label">Total leads</div><div class="metric-value">@Model.TotalLeads</div></div></div></div>
+    <div class="col-sm-6 col-xl-3"><div class="card metric-card"><div class="card-body"><div class="metric-label">Converted</div><div class="metric-value">@Model.ConvertedLeads</div></div></div></div>
+    <div class="col-sm-6 col-xl-3"><div class="card metric-card"><div class="card-body"><div class="metric-label">Not converted</div><div class="metric-value">@Model.NotConvertedLeads</div></div></div></div>
+    <div class="col-sm-6 col-xl-3"><div class="card metric-card"><div class="card-body"><div class="metric-label">Conversion rate</div><div class="metric-value">@Model.ConversionRate.ToString("N1")%</div></div></div></div>
+</div>
+<div class="row g-3">
+    <div class="col-lg-6"><div class="card h-100"><div class="card-header py-3 fw-semibold">By lead source</div><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Source</th><th>Total</th><th>Converted</th><th>Rate</th></tr></thead><tbody>
+    @foreach (var row in Model.BySource){<tr><td>@row.Name</td><td>@row.Total</td><td>@row.Converted</td><td>@row.Rate.ToString("N1")%</td></tr>}
+    @if (Model.BySource.Count == 0){<tr><td colspan="4"><div class="empty-state">No leads match these dates.</div></td></tr>}
+    </tbody></table></div></div></div>
+    <div class="col-lg-6"><div class="card h-100"><div class="card-header py-3 fw-semibold">By owner</div><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Sales Executive</th><th>Total</th><th>Converted</th><th>Rate</th></tr></thead><tbody>
+    @foreach (var row in Model.ByOwner){<tr><td>@row.Name</td><td>@row.Total</td><td>@row.Converted</td><td>@row.Rate.ToString("N1")%</td></tr>}
+    @if (Model.ByOwner.Count == 0){<tr><td colspan="4"><div class="empty-state">No leads match these dates.</div></td></tr>}
+    </tbody></table></div></div></div>
+</div>

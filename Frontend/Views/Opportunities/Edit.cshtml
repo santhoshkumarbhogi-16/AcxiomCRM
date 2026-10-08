@@ -1,0 +1,30 @@
+@model AcxiomCRM.Models.Opportunity
+@{
+    ViewData["Title"] = "Edit opportunity";
+}
+
+<div class="page-heading">
+    <div><div class="eyebrow">SALES PIPELINE</div><h1 class="h3 mb-1">Edit opportunity</h1><p class="text-muted mb-0">Update pipeline stage, value, and close date.</p></div>
+    <a asp-action="Details" asp-route-id="@Model.OpportunityId" class="btn btn-outline-secondary">Back to opportunity</a>
+</div>
+<div class="card form-card"><div class="card-body p-4">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <form method="post" class="row g-3">
+        <input asp-for="OpportunityId" type="hidden" />
+        <div class="col-md-6"><label asp-for="OpportunityName" class="form-label">Opportunity name</label><input asp-for="OpportunityName" class="form-control" /><span asp-validation-for="OpportunityName" class="field-validation"></span></div>
+        <div class="col-md-6"><label asp-for="CustomerId" class="form-label">Customer</label><select asp-for="CustomerId" asp-items="ViewBag.Customers" class="form-select"><option value="">Select customer</option></select><span asp-validation-for="CustomerId" class="field-validation"></span></div>
+        <div class="col-md-6"><label asp-for="LeadId" class="form-label">Lead</label><select asp-for="LeadId" asp-items="ViewBag.Leads" class="form-select"><option value="">Select lead</option></select><span asp-validation-for="LeadId" class="field-validation"></span></div>
+        <div class="col-md-6"><label asp-for="Source" class="form-label">Source</label><input asp-for="Source" class="form-control" /><span asp-validation-for="Source" class="field-validation"></span></div>
+        <div class="col-md-4"><label asp-for="Amount" class="form-label"></label><input asp-for="Amount" class="form-control" type="number" min="0.01" step="0.01" /><span asp-validation-for="Amount" class="field-validation"></span></div>
+        <div class="col-md-4"><label asp-for="Probability" class="form-label"></label><input asp-for="Probability" class="form-control" type="number" min="0" max="100" /><span asp-validation-for="Probability" class="field-validation"></span></div>
+        <div class="col-md-4"><label asp-for="Stage" class="form-label"></label><select asp-for="Stage" class="form-select"><option>Qualification</option><option>Proposal</option><option>Negotiation</option><option>Won</option><option>Lost</option></select><span asp-validation-for="Stage" class="field-validation"></span></div>
+        <div class="col-md-6"><label asp-for="ExpectedCloseDate" class="form-label">Expected close date</label><input asp-for="ExpectedCloseDate" class="form-control" type="date" /><span asp-validation-for="ExpectedCloseDate" class="field-validation"></span></div>
+        <div class="col-md-6"><label asp-for="Status" class="form-label"></label><select asp-for="Status" class="form-select"><option>Open</option><option>Closed</option></select><span asp-validation-for="Status" class="field-validation"></span></div>
+        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+        {
+            <div class="col-md-6"><label asp-for="AssignedTo" class="form-label">Assigned Sales Executive</label><select asp-for="AssignedTo" asp-items="ViewBag.SalesExecutives" class="form-select"><option value="">Select owner</option></select><span asp-validation-for="AssignedTo" class="field-validation"></span></div>
+        }
+        <div class="col-12"><label asp-for="Notes" class="form-label"></label><textarea asp-for="Notes" class="form-control" rows="3"></textarea><span asp-validation-for="Notes" class="field-validation"></span></div>
+        <div class="col-12"><button class="btn btn-primary">Save changes</button> <a asp-action="Index" class="btn btn-light">Cancel</a></div>
+    </form>
+</div></div>

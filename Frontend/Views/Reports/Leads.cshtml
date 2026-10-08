@@ -1,0 +1,20 @@
+@model IEnumerable<AcxiomCRM.Models.Lead>
+@{
+    ViewData["Title"] = "Lead report";
+}
+
+<div class="page-heading">
+    <div><div class="eyebrow">REPORTS</div><h1 class="h3 mb-1">Lead report</h1><p class="text-muted mb-0">Lead source, status, owner, and expected value.</p></div>
+    <a asp-controller="Leads" asp-action="Index" class="btn btn-outline-secondary">Manage leads</a>
+</div>
+<div class="card mb-3"><div class="card-body"><form method="get" class="row g-2 align-items-end">
+    <div class="col-md-7"><label for="q" class="form-label">Search</label><input id="q" name="q" value="@ViewBag.Q" class="form-control" placeholder="Lead name or company" /></div>
+    <div class="col-md-3"><label for="status" class="form-label">Status</label><select id="status" name="status" class="form-select"><option value="">All statuses</option>@foreach(var status in new[] {"New","Contacted","Qualified","Unqualified","Converted","Lost"}){<option value="@status" selected="@(ViewBag.Status == status)">@status</option>}</select></div>
+    <div class="col-auto"><button class="btn btn-outline-primary">Filter</button></div>
+</form></div></div>
+<div class="card"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Code</th><th>Lead</th><th>Source / Priority</th><th>Status</th><th>Expected value</th><th>Created</th></tr></thead><tbody>
+@foreach (var x in Model){<tr><td>@x.LeadCode</td><td>@x.LeadName<br /><small class="text-muted">@x.CompanyName</small></td><td>@x.Source / @x.Priority</td><td>@x.Status</td><td>₹ @x.ExpectedValue.ToString("N2")</td><td>@x.CreatedDate.ToLocalTime().ToString("dd MMM yyyy")</td></tr>}
+@if (!Model.Any()){<tr><td colspan="6"><div class="empty-state">No leads match these filters.</div></td></tr>}
+</tbody></table></div>
+@await Html.PartialAsync("_Pagination")
+</div>

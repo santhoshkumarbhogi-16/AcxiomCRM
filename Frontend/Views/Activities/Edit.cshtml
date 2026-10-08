@@ -1,0 +1,28 @@
+@model AcxiomCRM.Models.Activity
+@{
+    ViewData["Title"] = "Edit activity";
+}
+
+<div class="page-heading">
+    <div><div class="eyebrow">SALES WORKSPACE</div><h1 class="h3 mb-1">Edit activity</h1><p class="text-muted mb-0">Update this open activity.</p></div>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to activities</a>
+</div>
+<div class="card form-card"><div class="card-body p-4">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <form method="post" class="row g-3">
+        <input asp-for="ActivityId" type="hidden" />
+        <div class="col-md-6"><label asp-for="Subject" class="form-label"></label><input asp-for="Subject" class="form-control" /><span asp-validation-for="Subject" class="field-validation"></span></div>
+        <div class="col-md-6"><label asp-for="ActivityType" class="form-label">Type</label><select asp-for="ActivityType" class="form-select"><option>Call</option><option>Meeting</option><option>Email</option><option>Task</option></select><span asp-validation-for="ActivityType" class="field-validation"></span></div>
+        <div class="col-md-4"><label asp-for="ActivityDate" class="form-label">Date and time</label><input asp-for="ActivityDate" class="form-control" type="datetime-local" /><span asp-validation-for="ActivityDate" class="field-validation"></span></div>
+        <div class="col-md-4"><label asp-for="CustomerId" class="form-label">Customer</label><select asp-for="CustomerId" asp-items="ViewBag.Customers" class="form-select"><option value="">Select customer</option></select><span asp-validation-for="CustomerId" class="field-validation"></span></div>
+        <div class="col-md-4"><label asp-for="LeadId" class="form-label">Lead</label><select asp-for="LeadId" asp-items="ViewBag.Leads" class="form-select"><option value="">Select lead</option></select><span asp-validation-for="LeadId" class="field-validation"></span></div>
+        <div class="col-md-6"><label asp-for="OpportunityId" class="form-label">Opportunity</label><select asp-for="OpportunityId" asp-items="ViewBag.Opportunities" class="form-select"><option value="">Select opportunity</option></select><span asp-validation-for="OpportunityId" class="field-validation"></span></div>
+        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+        {
+            <div class="col-md-6"><label asp-for="AssignedTo" class="form-label">Assign to Sales Executive</label><select asp-for="AssignedTo" asp-items="ViewBag.SalesExecutives" class="form-select"><option value="">Select owner</option></select><span asp-validation-for="AssignedTo" class="field-validation"></span></div>
+        }
+        <div class="col-md-6"><label asp-for="Description" class="form-label"></label><textarea asp-for="Description" class="form-control" rows="3"></textarea><span asp-validation-for="Description" class="field-validation"></span></div>
+        <input asp-for="Status" type="hidden" />
+        <div class="col-12"><button class="btn btn-primary">Save changes</button> <a asp-action="Index" class="btn btn-light">Cancel</a></div>
+    </form>
+</div></div>

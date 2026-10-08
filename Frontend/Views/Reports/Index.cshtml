@@ -1,0 +1,29 @@
+@{
+    ViewData["Title"] = "Reports";
+}
+
+<div class="page-heading">
+    <div><div class="eyebrow">INSIGHTS</div><h1 class="h3 mb-1">Reports</h1><p class="text-muted mb-0">Explore CRM performance within your authorized record scope.</p></div>
+</div>
+<div class="row g-3">
+    @foreach (var item in new[] {
+        ("Customers", ViewBag.Customers, "Customer records and account status", "/Reports/Customers", "bi-people"),
+        ("Leads", ViewBag.Leads, "Sources, qualification, and conversion", "/Reports/Leads", "bi-person-lines-fill"),
+        ("Opportunities", ViewBag.Opportunities, "Sales deals and outcomes", "/Reports/Opportunities", "bi-briefcase"),
+        ("Follow-ups", ViewBag.FollowUps, "Planned, overdue, and completed tasks", "/Reports/FollowUps", "bi-calendar-check")
+    })
+    {
+        <div class="col-sm-6 col-xl-3"><a href="@item.Item4" class="metric-link"><div class="card metric-card"><div class="card-body"><span class="metric-icon icon-blue"><i class="bi @item.Item5"></i></span><div class="metric-label">@item.Item1</div><div class="metric-value">@item.Item2</div><div class="metric-foot">@item.Item3</div></div></div></a></div>
+    }
+    <div class="col-sm-6 col-xl-3"><a asp-action="Pipeline" class="metric-link"><div class="card metric-card"><div class="card-body"><span class="metric-icon icon-green"><i class="bi bi-graph-up-arrow"></i></span><div class="metric-label">Open pipeline</div><div class="metric-value">₹ @ViewBag.Pipeline.ToString("N0")</div><div class="metric-foot">Stage-wise and owner-wise</div></div></div></a></div>
+    <div class="col-sm-6 col-xl-3"><a asp-action="Conversion" class="metric-link"><div class="card metric-card"><div class="card-body"><span class="metric-icon icon-purple"><i class="bi bi-arrow-repeat"></i></span><div class="metric-label">Lead conversion</div><div class="metric-foot">Converted versus unconverted leads</div></div></div></a></div>
+    <div class="col-sm-6 col-xl-3"><a asp-controller="Opportunities" asp-action="Index" asp-route-stage="Won" class="metric-link"><div class="card metric-card"><div class="card-body"><span class="metric-icon icon-purple"><i class="bi bi-trophy"></i></span><div class="metric-label">Won deals</div><div class="metric-value">@ViewBag.Won</div><div class="metric-foot">Closed successfully</div></div></div></a></div>
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+    {
+        <div class="col-sm-6 col-xl-3"><a asp-action="UserActivity" class="metric-link"><div class="card metric-card"><div class="card-body"><span class="metric-icon icon-orange"><i class="bi bi-person-check"></i></span><div class="metric-label">User activity</div><div class="metric-foot">Recent action totals by user</div></div></div></a></div>
+    }
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+    {
+        <div class="col-sm-6 col-xl-3"><a asp-controller="Audit" asp-action="Index" class="metric-link"><div class="card metric-card"><div class="card-body"><span class="metric-icon icon-blue"><i class="bi bi-shield-check"></i></span><div class="metric-label">Audit log</div><div class="metric-foot">Authentication and business events</div></div></div></a></div>
+    }
+</div>

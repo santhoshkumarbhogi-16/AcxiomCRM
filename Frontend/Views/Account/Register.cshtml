@@ -1,0 +1,39 @@
+@model AcxiomCRM.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Create account";
+}
+
+<div class="auth-shell">
+    <div class="card auth-card">
+        <div class="card-body p-4 p-md-5">
+            <div class="eyebrow mb-2">ACXIOMCRM</div>
+            <h1 class="h3 mb-2">Create your account</h1>
+            <p class="text-muted mb-4">Register as a Sales Executive to get started.</p>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+            <form method="post">
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label">Full name</label>
+                    <input asp-for="FullName" class="form-control" autocomplete="name" autofocus />
+                    <span asp-validation-for="FullName" class="field-validation"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" autocomplete="email" />
+                    <span asp-validation-for="Email" class="field-validation"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" class="form-control" autocomplete="new-password" />
+                    <span asp-validation-for="Password" class="field-validation"></span>
+                </div>
+                <div class="mb-4">
+                    <label asp-for="ConfirmPassword" class="form-label">Confirm password</label>
+                    <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" />
+                    <span asp-validation-for="ConfirmPassword" class="field-validation"></span>
+                </div>
+                <button class="btn btn-primary w-100">Create account</button>
+            </form>
+            <p class="text-center text-muted mt-4 mb-0">Already registered? <a asp-action="Login">Sign in</a></p>
+        </div>
+    </div>
+</div>

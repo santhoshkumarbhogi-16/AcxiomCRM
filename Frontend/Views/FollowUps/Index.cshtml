@@ -1,0 +1,54 @@
+@model IEnumerable<AcxiomCRM.Models.FollowUp>
+@{
+    ViewData["Title"] = "Follow-ups";
+}
+
+<div class="page-heading">
+    <div><div class="eyebrow">SALES WORKSPACE</div><h1 class="h3 mb-1">Follow-ups</h1><p class="text-muted mb-0">Plan the next customer touchpoint and keep commitments on track.</p></div>
+    <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Schedule follow-up</a>
+</div>
+<div class="card mb-3"><div class="card-body">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-3"><label for="status" class="form-label">Status</label><select id="status" name="status" class="form-select"><option value="">All statuses</option>@foreach (var value in new[] { "Planned", "Completed", "Missed", "Cancelled" }){<option value="@value" selected="@(ViewBag.Status == value)">@value</option>}</select></div>
+        <div class="col-md-3"><label for="from" class="form-label">From</label><input id="from" name="from" type="date" value="@ViewBag.From" class="form-control" /></div>
+        <div class="col-md-3"><label for="to" class="form-label">To</label><input id="to" name="to" type="date" value="@ViewBag.To" class="form-control" /></div>
+        <div class="col-auto"><button class="btn btn-outline-primary">Filter</button></div>
+    </form>
+</div></div>
+<div class="card"><div class="table-responsive"><table class="table table-hover mb-0">
+    <thead><tr><th>Scheduled</th><th>Follow-up</th><th>Type</th><th>Related record</th><th>Status</th><th class="text-end">Actions</th></tr></thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        var isOverdue = item.Status == "Planned" && item.FollowUpDate.Date < DateTime.Today;
+        <tr>
+            <td><div class="fw-semibold">@item.FollowUpDate.ToString("dd MMM yyyy")</div>@if (isOverdue){<small class="text-danger">Overdue</small>}</td>
+            <td><div class="fw-semibold">@item.Subject</div><small class="text-muted">@item.Remarks</small></td>
+            <td>@item.FollowUpType</td>
+            <td>@(item.CustomerId.HasValue ? $"Customer #{item.CustomerId}" : item.LeadId.HasValue ? $"Lead #{item.LeadId}" : $"Opportunity #{item.OpportunityId}")</td>
+            <td><span class="badge @(item.Status == "Completed" ? "text-bg-success" : item.Status == "Missed" ? "text-bg-danger" : "text-bg-secondary")">@item.Status</span></td>
+            <td class="text-end text-nowrap">
+                @if (item.Status == "Planned")
+                {
+                    <form method="post" asp-action="Reschedule" asp-route-id="@item.FollowUpId" class="d-inline-flex gap-1">
+                        <input type="date" name="followUpDate" min="@DateTime.Today.ToString("yyyy-MM-dd")" value="@item.FollowUpDate.ToString("yyyy-MM-dd")" class="form-control form-control-sm" aria-label="New date" />
+                        <button class="btn btn-sm btn-outline-primary">Reschedule</button>
+                    </form>
+                    <form method="post" asp-action="UpdateStatus" asp-route-id="@item.FollowUpId" class="d-inline"><input type="hidden" name="status" value="Completed" /><button class="btn btn-sm btn-outline-success">Complete</button></form>
+                    @if (isOverdue)
+                    {
+                        <form method="post" asp-action="UpdateStatus" asp-route-id="@item.FollowUpId" class="d-inline"><input type="hidden" name="status" value="Missed" /><button class="btn btn-sm btn-outline-danger">Mark missed</button></form>
+                    }
+                    <form method="post" asp-action="UpdateStatus" asp-route-id="@item.FollowUpId" class="d-inline" onsubmit="return confirm('Cancel this follow-up?')"><input type="hidden" name="status" value="Cancelled" /><button class="btn btn-sm btn-outline-secondary">Cancel</button></form>
+                }
+            </td>
+        </tr>
+    }
+    @if (!Model.Any())
+    {
+        <tr><td colspan="6"><div class="empty-state"><i class="bi bi-calendar-check fs-2"></i><p class="mb-0 mt-2">No follow-ups match these filters.</p></div></td></tr>
+    }
+    </tbody>
+</table></div>
+@await Html.PartialAsync("_Pagination")
+</div>

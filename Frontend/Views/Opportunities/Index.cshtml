@@ -1,0 +1,43 @@
+@model IEnumerable<AcxiomCRM.Models.Opportunity>
+@{
+    ViewData["Title"] = "Opportunities";
+}
+
+<div class="page-heading">
+    <div><div class="eyebrow">SALES PIPELINE</div><h1 class="h3 mb-1">Opportunities</h1><p class="text-muted mb-0">Monitor active deals, forecasts, and outcomes.</p></div>
+    <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add opportunity</a>
+</div>
+<div class="card mb-3"><div class="card-body">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-5"><label for="q" class="form-label">Search</label><input id="q" name="q" value="@ViewBag.Q" class="form-control" placeholder="Opportunity or customer" /></div>
+        <div class="col-md-3"><label for="stage" class="form-label">Stage</label><select id="stage" name="stage" class="form-select"><option value="">All stages</option>@foreach (var value in new[] { "Qualification", "Proposal", "Negotiation", "Won", "Lost" }){<option value="@value" selected="@(ViewBag.Stage == value)">@value</option>}</select></div>
+        <div class="col-md-2"><label for="status" class="form-label">Status</label><select id="status" name="status" class="form-select"><option value="">All</option><option value="Open" selected="@(ViewBag.Status == "Open")">Open</option><option value="Closed" selected="@(ViewBag.Status == "Closed")">Closed</option></select></div>
+        <div class="col-auto"><button class="btn btn-outline-primary">Filter</button></div>
+    </form>
+</div></div>
+<div class="card"><div class="table-responsive"><table class="table table-hover mb-0">
+    <thead><tr><th>Opportunity</th><th>Customer</th><th>Stage</th><th>Amount</th><th>Probability</th><th>Close date</th><th>Status</th><th class="text-end">Actions</th></tr></thead>
+    <tbody>
+    @foreach (var opportunity in Model)
+    {
+        <tr>
+            <td class="fw-semibold">@opportunity.OpportunityName</td>
+            <td>@(opportunity.Customer?.CustomerName ?? (opportunity.LeadId.HasValue ? $"Lead #{opportunity.LeadId}" : "—"))</td>
+            <td><span class="badge text-bg-light">@opportunity.Stage</span></td>
+            <td>₹ @opportunity.Amount.ToString("N2")</td>
+            <td>@opportunity.Probability%</td>
+            <td>@opportunity.ExpectedCloseDate.ToString("dd MMM yyyy")</td>
+            <td><span class="badge @(opportunity.Status == "Open" ? "text-bg-success" : "text-bg-secondary")">@opportunity.Status</span></td>
+            <td class="text-end text-nowrap"><a asp-action="Details" asp-route-id="@opportunity.OpportunityId" class="btn btn-sm btn-outline-secondary">View</a> <a asp-action="Edit" asp-route-id="@opportunity.OpportunityId" class="btn btn-sm btn-outline-primary">Edit</a>
+                <form method="post" asp-action="Delete" asp-route-id="@opportunity.OpportunityId" class="d-inline" onsubmit="return confirm('Delete this opportunity?')"><button class="btn btn-sm btn-outline-danger">Delete</button></form>
+            </td>
+        </tr>
+    }
+    @if (!Model.Any())
+    {
+        <tr><td colspan="8"><div class="empty-state"><i class="bi bi-briefcase fs-2"></i><p class="mb-0 mt-2">No opportunities match your filters.</p></div></td></tr>
+    }
+    </tbody>
+</table></div>
+@await Html.PartialAsync("_Pagination")
+</div>

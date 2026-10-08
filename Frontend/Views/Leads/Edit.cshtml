@@ -1,0 +1,29 @@
+@model AcxiomCRM.Models.Lead
+@{
+    ViewData["Title"] = "Edit lead";
+}
+
+<div class="page-heading">
+    <div><div class="eyebrow">LEAD MANAGEMENT</div><h1 class="h3 mb-1">Edit lead</h1><p class="text-muted mb-0">@Model.LeadCode</p></div>
+    <a asp-action="Details" asp-route-id="@Model.LeadId" class="btn btn-outline-secondary">Back to lead</a>
+</div>
+<div class="card form-card"><div class="card-body p-4">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <form method="post" class="row g-3">
+        <input asp-for="LeadId" type="hidden" />
+        <div class="col-md-6"><label asp-for="LeadName" class="form-label">Contact name</label><input asp-for="LeadName" class="form-control" /><span asp-validation-for="LeadName" class="field-validation"></span></div>
+        <div class="col-md-6"><label asp-for="CompanyName" class="form-label">Company</label><input asp-for="CompanyName" class="form-control" /><span asp-validation-for="CompanyName" class="field-validation"></span></div>
+        <div class="col-md-6"><label asp-for="Email" class="form-label"></label><input asp-for="Email" class="form-control" type="email" /><span asp-validation-for="Email" class="field-validation"></span></div>
+        <div class="col-md-6"><label asp-for="Phone" class="form-label"></label><input asp-for="Phone" class="form-control" maxlength="10" /><span asp-validation-for="Phone" class="field-validation"></span></div>
+        <div class="col-md-4"><label asp-for="Source" class="form-label"></label><select asp-for="Source" class="form-select"><option>Website</option><option>Referral</option><option>Advertisement</option><option>Event</option><option>Other</option></select><span asp-validation-for="Source" class="field-validation"></span></div>
+        <div class="col-md-4"><label asp-for="Status" class="form-label"></label><select asp-for="Status" class="form-select"><option>New</option><option>Contacted</option><option>Qualified</option><option>Unqualified</option><option>Converted</option><option>Lost</option></select><span asp-validation-for="Status" class="field-validation"></span><small class="text-muted">Status changes follow the lead workflow.</small></div>
+        <div class="col-md-4"><label asp-for="Priority" class="form-label"></label><select asp-for="Priority" class="form-select"><option>Low</option><option>Normal</option><option>High</option></select><span asp-validation-for="Priority" class="field-validation"></span></div>
+        <div class="col-md-6"><label asp-for="ExpectedValue" class="form-label">Expected value</label><input asp-for="ExpectedValue" class="form-control" type="number" min="0" step="0.01" /><span asp-validation-for="ExpectedValue" class="field-validation"></span></div>
+        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+        {
+            <div class="col-md-6"><label asp-for="AssignedTo" class="form-label">Assigned Sales Executive</label><select asp-for="AssignedTo" asp-items="ViewBag.SalesExecutives" class="form-select"><option value="">Select owner</option></select><span asp-validation-for="AssignedTo" class="field-validation"></span></div>
+        }
+        <div class="col-12"><label asp-for="Notes" class="form-label"></label><textarea asp-for="Notes" class="form-control" rows="3"></textarea><span asp-validation-for="Notes" class="field-validation"></span></div>
+        <div class="col-12"><button class="btn btn-primary">Save changes</button> <a asp-action="Details" asp-route-id="@Model.LeadId" class="btn btn-light">Cancel</a></div>
+    </form>
+</div></div>

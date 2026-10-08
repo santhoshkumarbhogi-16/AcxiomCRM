@@ -1,0 +1,44 @@
+@model AcxiomCRM.ViewModels.CustomerDetailsViewModel
+@{
+    ViewData["Title"] = "Customer details";
+    var customer = Model.Customer;
+}
+
+<div class="page-heading">
+    <div><div class="eyebrow">CUSTOMER PROFILE</div><h1 class="h3 mb-1">@customer.CustomerName</h1><p class="text-muted mb-0">@customer.CompanyName · @customer.CustomerCode</p></div>
+    <div class="d-flex gap-2"><a asp-action="Edit" asp-route-id="@customer.CustomerId" class="btn btn-primary">Edit customer</a><a asp-action="Index" class="btn btn-outline-secondary">Back</a></div>
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-lg-8"><div class="card"><div class="card-body p-4">
+        <h2 class="h5 mb-3">Contact information</h2>
+        <dl class="row mb-0">
+            <dt class="col-sm-4 text-muted">Email</dt><dd class="col-sm-8"><a href="mailto:@customer.Email">@customer.Email</a></dd>
+            <dt class="col-sm-4 text-muted">Phone</dt><dd class="col-sm-8">@customer.Phone</dd>
+            <dt class="col-sm-4 text-muted">Address</dt><dd class="col-sm-8">@customer.Address</dd>
+            <dt class="col-sm-4 text-muted">City / State</dt><dd class="col-sm-8">@customer.City, @customer.State</dd>
+            <dt class="col-sm-4 text-muted">Notes</dt><dd class="col-sm-8">@customer.Notes</dd>
+            <dt class="col-sm-4 text-muted">Created</dt><dd class="col-sm-8">@customer.CreatedDate.ToLocalTime().ToString("dd MMM yyyy, h:mm tt")</dd>
+        </dl>
+    </div></div></div>
+    <div class="col-lg-4"><div class="card"><div class="card-body p-4"><div class="text-muted small">ACCOUNT STATUS</div><div class="mt-2"><span class="badge @(customer.Status == "Active" ? "text-bg-success" : "text-bg-secondary")">@customer.Status</span></div></div></div></div>
+</div>
+<div class="row g-3">
+    <div class="col-lg-6"><div class="card h-100"><div class="card-body"><h2 class="h5">Recent activities</h2>
+        <ul class="list-group list-group-flush">
+        @foreach (var activity in Model.Activities){<li class="list-group-item px-0"><div class="d-flex justify-content-between"><strong>@activity.Subject</strong><small class="text-muted">@activity.ActivityDate.ToLocalTime().ToString("dd MMM yyyy")</small></div><small class="text-muted">@activity.ActivityType · @activity.Status</small></li>}
+        @if (!Model.Activities.Any()){<li class="list-group-item px-0 text-muted">No activities recorded.</li>}
+        </ul>
+    </div></div></div>
+    <div class="col-lg-6"><div class="card h-100"><div class="card-body"><h2 class="h5">Follow-up history</h2>
+        <ul class="list-group list-group-flush">
+        @foreach (var followUp in Model.FollowUps){<li class="list-group-item px-0"><div class="d-flex justify-content-between"><strong>@followUp.Subject</strong><small class="text-muted">@followUp.FollowUpDate.ToString("dd MMM yyyy")</small></div><small class="text-muted">@followUp.FollowUpType · @followUp.Status</small></li>}
+        @if (!Model.FollowUps.Any()){<li class="list-group-item px-0 text-muted">No follow-ups recorded.</li>}
+        </ul>
+    </div></div></div>
+</div>
+<div class="card mt-3"><div class="card-body"><h2 class="h5">Opportunities</h2>
+    <div class="table-responsive"><table class="table mb-0"><thead><tr><th>Opportunity</th><th>Stage</th><th>Status</th><th class="text-end">Amount</th></tr></thead><tbody>
+    @foreach (var opportunity in Model.Opportunities){<tr><td><a asp-controller="Opportunities" asp-action="Details" asp-route-id="@opportunity.OpportunityId">@opportunity.OpportunityName</a></td><td>@opportunity.Stage</td><td>@opportunity.Status</td><td class="text-end">₹ @opportunity.Amount.ToString("N2")</td></tr>}
+    @if (!Model.Opportunities.Any()){<tr><td colspan="4" class="text-muted">No opportunities linked to this customer.</td></tr>}
+    </tbody></table></div>
+</div></div>

@@ -1,0 +1,69 @@
+@model AcxiomCRM.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="page-heading">
+    <div><div class="eyebrow">ACXIOMCRM OVERVIEW</div><h1 class="h3 mb-1">Good day, @User.Identity?.Name</h1><p class="text-muted mb-0">Here is your sales workspace at a glance.</p></div>
+    <form method="get" class="d-flex flex-wrap align-items-end gap-2">
+        <div><label class="form-label small mb-1" for="range">Reporting period</label><select id="range" name="range" class="form-select form-select-sm" onchange="if (this.value !== 'custom') this.form.submit(); document.getElementById('customRange').classList.toggle('d-none', this.value !== 'custom')">
+            <option value="today" selected="@(Model.Range == "today")">Today</option>
+            <option value="week" selected="@(Model.Range == "week")">This week</option>
+            <option value="month" selected="@(Model.Range == "month")">This month</option>
+            <option value="custom" selected="@(Model.Range == "custom")">Custom range</option>
+            <option value="all" selected="@(Model.Range == "all")">All time</option>
+        </select></div>
+        <div id="customRange" class="d-flex flex-wrap align-items-end gap-2 @(Model.Range == "custom" ? "" : "d-none")">
+            <div><label class="form-label small mb-1" for="from">From</label><input id="from" name="from" type="date" value="@Model.From?.ToString("yyyy-MM-dd")" class="form-control form-control-sm" /></div>
+            <div><label class="form-label small mb-1" for="to">To</label><input id="to" name="to" type="date" value="@Model.To?.ToString("yyyy-MM-dd")" class="form-control form-control-sm" /></div>
+            <button class="btn btn-sm btn-primary">Apply</button>
+        </div>
+    </form>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3"><a asp-controller="Customers" asp-action="Index" class="metric-link"><div class="card metric-card"><div class="card-body"><div class="metric-icon icon-blue"><i class="bi bi-people"></i></div><div class="metric-label">Customers</div><div class="metric-value">@Model.TotalCustomers</div><div class="metric-foot">In selected period</div></div></div></a></div>
+    <div class="col-6 col-xl-3"><a asp-controller="Leads" asp-action="Index" class="metric-link"><div class="card metric-card"><div class="card-body"><div class="metric-icon icon-purple"><i class="bi bi-person-lines-fill"></i></div><div class="metric-label">Open leads</div><div class="metric-value">@Model.OpenLeads</div><div class="metric-foot">@Model.TotalLeads total leads</div></div></div></a></div>
+    <div class="col-6 col-xl-3"><a asp-controller="Opportunities" asp-action="Index" class="metric-link"><div class="card metric-card"><div class="card-body"><div class="metric-icon icon-green"><i class="bi bi-briefcase"></i></div><div class="metric-label">Open opportunities</div><div class="metric-value">@Model.OpenOpportunities</div><div class="metric-foot">@Model.TotalOpportunities total opportunities</div></div></div></a></div>
+    <div class="col-6 col-xl-3"><a asp-controller="FollowUps" asp-action="Index" asp-route-status="Planned" class="metric-link"><div class="card metric-card"><div class="card-body"><div class="metric-icon icon-orange"><i class="bi bi-calendar-check"></i></div><div class="metric-label">Upcoming follow-ups</div><div class="metric-value">@Model.PendingFollowUps</div><div class="metric-foot">@Model.OverdueFollowUps overdue</div></div></div></a></div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-8"><div class="card pipeline-card h-100"><div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start"><div><div class="metric-label">OPEN SALES PIPELINE</div><h2 class="pipeline-value mb-1">₹ @Model.PipelineValue.ToString("N2")</h2><p class="text-muted mb-0">Weighted forecast: <strong>₹ @Model.WeightedPipeline.ToString("N2")</strong></p></div><span class="metric-icon icon-blue"><i class="bi bi-graph-up-arrow"></i></span></div>
+        <div class="pipeline-stats mt-4"><div><span>Won</span><strong>@Model.WonOpportunities</strong></div><div><span>Lost</span><strong>@Model.LostOpportunities</strong></div>@if (User.IsInRole("Admin")){<div><span>Users</span><strong>@Model.TotalUsers</strong></div>}</div>
+    </div></div></div>
+    <div class="col-lg-4"><div class="card h-100"><div class="card-body p-4"><h2 class="h6 mb-3">Lead status</h2><div class="chart-wrap"><canvas id="leadChart" aria-label="Leads by status" role="img"></canvas></div></div></div></div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6"><div class="card h-100"><div class="card-body p-4"><h2 class="h6 mb-3">Open pipeline by stage</h2><div class="chart-wrap chart-wrap-short"><canvas id="pipelineChart" aria-label="Open opportunity amount by stage" role="img"></canvas></div></div></div></div>
+    <div class="col-lg-6"><div class="card h-100"><div class="card-body p-4"><h2 class="h6 mb-3">Monthly won sales</h2><div class="chart-wrap chart-wrap-short"><canvas id="salesChart" aria-label="Won sales by month" role="img"></canvas></div></div></div></div>
+</div>
+
+@section Scripts {
+    <script>
+        const leadLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.LeadStatuses.Keys));
+        const leadValues = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.LeadStatuses.Values));
+        const stageLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.OpportunityStages.Keys));
+        const stageValues = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.OpportunityStages.Values));
+        const monthLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlySales.Keys));
+        const monthValues = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlySales.Values));
+        const palette = ['#176b87', '#476b86', '#287d70', '#6a91a5', '#35566f', '#86aebc'];
+        new Chart(document.getElementById('leadChart'), {
+            type: 'doughnut',
+            data: { labels: leadLabels, datasets: [{ data: leadValues, backgroundColor: palette, borderWidth: 0 }] },
+            options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        });
+        new Chart(document.getElementById('pipelineChart'), {
+            type: 'bar',
+            data: { labels: stageLabels, datasets: [{ label: 'Pipeline (₹)', data: stageValues, backgroundColor: '#287d90', borderRadius: 6 }] },
+            options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+        });
+        new Chart(document.getElementById('salesChart'), {
+            type: 'line',
+            data: { labels: monthLabels, datasets: [{ label: 'Won sales (₹)', data: monthValues, borderColor: '#287d70', backgroundColor: 'rgba(40,125,112,.12)', fill: true, tension: .35 }] },
+            options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+        });
+    </script>
+}

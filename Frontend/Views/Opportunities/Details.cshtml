@@ -1,0 +1,24 @@
+@model AcxiomCRM.Models.Opportunity
+@{
+    ViewData["Title"] = "Opportunity details";
+}
+
+<div class="page-heading">
+    <div><div class="eyebrow">SALES PIPELINE · @Model.Stage</div><h1 class="h3 mb-1">@Model.OpportunityName</h1><p class="text-muted mb-0">@(Model.Customer?.CustomerName ?? "Lead opportunity")</p></div>
+    <div class="d-flex gap-2"><a asp-action="Edit" asp-route-id="@Model.OpportunityId" class="btn btn-primary">Edit opportunity</a><a asp-action="Index" class="btn btn-outline-secondary">Back</a></div>
+</div>
+<div class="row g-3">
+    <div class="col-lg-8"><div class="card"><div class="card-body p-4">
+        <h2 class="h5 mb-3">Deal details</h2>
+        <dl class="row mb-0">
+            <dt class="col-sm-4 text-muted">Amount</dt><dd class="col-sm-8">₹ @Model.Amount.ToString("N2")</dd>
+            <dt class="col-sm-4 text-muted">Probability</dt><dd class="col-sm-8">@Model.Probability%</dd>
+            <dt class="col-sm-4 text-muted">Weighted value</dt><dd class="col-sm-8">₹ @Model.WeightedValue.ToString("N2")</dd>
+            <dt class="col-sm-4 text-muted">Stage</dt><dd class="col-sm-8">@Model.Stage</dd>
+            <dt class="col-sm-4 text-muted">Expected close</dt><dd class="col-sm-8">@Model.ExpectedCloseDate.ToString("dd MMM yyyy")</dd>
+            <dt class="col-sm-4 text-muted">Source</dt><dd class="col-sm-8">@Model.Source</dd>
+            <dt class="col-sm-4 text-muted">Notes</dt><dd class="col-sm-8">@Model.Notes</dd>
+        </dl>
+    </div></div></div>
+    <div class="col-lg-4"><div class="card"><div class="card-body p-4"><div class="text-muted small">DEAL STATUS</div><div class="mt-2"><span class="badge @(Model.Status == "Open" ? "text-bg-success" : "text-bg-secondary")">@Model.Status</span></div></div></div></div>
+</div>

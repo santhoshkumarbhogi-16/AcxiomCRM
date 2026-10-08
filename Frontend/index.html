@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102b3f">
+  <title>AcxiomCRM</title>
+  <link rel="icon" type="image/svg+xml" href="/images/acxiom-mark.svg">
+  <link rel="stylesheet" href="/css/site.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <section id="auth-screen" class="auth-screen">
+    <div class="auth-card">
+      <div class="brand"><img class="brand-mark" src="/images/acxiom-mark.svg" alt=""><span>Acxiom<span class="brand-accent">CRM</span></span></div>
+      <p class="eyebrow">SALES WORKSPACE</p>
+      <h1 id="auth-title">Welcome back</h1>
+      <p class="muted">Sign in to continue to your CRM workspace.</p>
+      <div id="auth-error" class="notice error hidden" role="alert"></div>
+      <form id="auth-form">
+        <label id="name-field" class="hidden">Full name<input name="fullName" autocomplete="name"></label>
+        <label id="email-field">Email<input name="email" type="email" autocomplete="username" required></label>
+        <label id="password-field">Password<input name="password" type="password" autocomplete="current-password" required></label>
+        <button id="auth-submit" class="button primary" type="submit">Sign in</button>
+      </form>
+      <button id="auth-switch" class="link-button" type="button">Create a Sales Executive account</button>
+    </div>
+  </section>
+
+  <div id="app-shell" class="hidden">
+    <header class="topbar">
+      <a class="brand" href="#" data-page="dashboard"><img class="brand-mark" src="/images/acxiom-mark.svg" alt=""><span>Acxiom<span class="brand-accent">CRM</span></span></a>
+      <button id="mobile-menu" class="mobile-menu" type="button" aria-label="Toggle navigation">☰</button>
+      <nav id="main-nav" aria-label="Main navigation"></nav>
+      <div class="account"><span id="account-name"></span><span id="account-role" class="role-pill"></span><button id="logout" class="button outline light" type="button">Sign out</button></div>
+    </header>
+    <main class="content">
+      <div id="notice" class="notice hidden" role="status"></div>
+      <div id="page"></div>
+    </main>
+    <footer>AcxiomCRM <span>Customer relationship workspace</span></footer>
+  </div>
+
+  <dialog id="record-dialog" class="record-dialog">
+    <form id="record-form" method="dialog">
+      <div class="dialog-heading"><div><p class="eyebrow">CRM RECORD</p><h2 id="dialog-title">Create record</h2></div><button class="icon-button" value="cancel" aria-label="Close">×</button></div>
+      <div id="record-fields" class="form-grid"></div>
+      <div id="form-error" class="notice error hidden" role="alert"></div>
+      <div class="dialog-actions"><button class="button outline" value="cancel">Cancel</button><button id="save-record" class="button primary" type="submit">Save</button></div>
+    </form>
+  </dialog>
+</body>
+</html>

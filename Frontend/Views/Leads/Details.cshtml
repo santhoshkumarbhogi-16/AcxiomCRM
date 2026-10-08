@@ -1,0 +1,35 @@
+@model AcxiomCRM.Models.Lead
+@{
+    ViewData["Title"] = "Lead details";
+}
+
+<div class="page-heading">
+    <div><div class="eyebrow">LEAD PROFILE · @Model.LeadCode</div><h1 class="h3 mb-1">@Model.LeadName</h1><p class="text-muted mb-0">@Model.CompanyName</p></div>
+    <div class="d-flex gap-2"><a asp-action="Edit" asp-route-id="@Model.LeadId" class="btn btn-outline-primary">Edit lead</a><a asp-action="Index" class="btn btn-outline-secondary">Back</a></div>
+</div>
+<div class="row g-3">
+    <div class="col-lg-8"><div class="card"><div class="card-body p-4">
+        <h2 class="h5 mb-3">Prospect information</h2>
+        <dl class="row mb-0">
+            <dt class="col-sm-4 text-muted">Email</dt><dd class="col-sm-8"><a href="mailto:@Model.Email">@Model.Email</a></dd>
+            <dt class="col-sm-4 text-muted">Phone</dt><dd class="col-sm-8">@Model.Phone</dd>
+            <dt class="col-sm-4 text-muted">Source</dt><dd class="col-sm-8">@Model.Source</dd>
+            <dt class="col-sm-4 text-muted">Priority</dt><dd class="col-sm-8">@Model.Priority</dd>
+            <dt class="col-sm-4 text-muted">Expected value</dt><dd class="col-sm-8">₹ @Model.ExpectedValue.ToString("N2")</dd>
+            <dt class="col-sm-4 text-muted">Notes</dt><dd class="col-sm-8">@Model.Notes</dd>
+        </dl>
+    </div></div></div>
+    <div class="col-lg-4">
+        <div class="card mb-3"><div class="card-body p-4"><div class="text-muted small">LEAD STATUS</div><div class="mt-2"><span class="badge text-bg-primary">@Model.Status</span></div></div></div>
+        @if (Model.Status == "Qualified")
+        {
+            <div class="card"><div class="card-body p-4">
+                <h2 class="h6">Convert this lead</h2>
+                <p class="text-muted small">Create a customer and an open sales opportunity from this qualified lead.</p>
+                <form method="post" asp-action="Convert" asp-route-id="@Model.LeadId" onsubmit="return confirm('Convert this qualified lead into a customer and opportunity?')">
+                    <button class="btn btn-success w-100"><i class="bi bi-arrow-repeat"></i> Convert lead</button>
+                </form>
+            </div></div>
+        }
+    </div>
+</div>

@@ -1,0 +1,17 @@
+bin/
+obj/
+*.db
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+.vs/
+.vscode/
+node_modules/
+venv/
+.venv/
+env/
+.env
+Backend/.env
+*.env
+__pycache__/
+*.py[cod]
