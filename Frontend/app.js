@@ -406,7 +406,7 @@ async function loadUsers() {
   try {
     const q = $("#user-search").value;
     const result = await api(`/auth/users?q=${encodeURIComponent(q)}`);
-    $("#users-table").innerHTML = `<table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>${result.items.map(user => `<tr><td>${escapeHtml(user.fullName)}</td><td>${escapeHtml(user.email)}</td><td><select data-role="${user._id}">${["Admin", "Manager", "SalesExecutive"].map(role => `<option ${user.role === role ? "selected" : ""}>${role}</option>`).join("")}</select></td><td>${user.isActive ? "Active" : "Inactive"}</td><td><button class="text-action save-user" data-id="${user._id}">Save role</button><button class="text-action toggle-user" data-id="${user._id}" data-active="${user.isActive}">${user.isActive ? "Deactivate" : "Activate"}</button><button class="text-action reset-user" data-id="${user._id}">Issue reset link</button></td></tr>`).join("")}</tbody></table>`;
+    $("#users-table").innerHTML = `<table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>${result.items.map(user => `<tr><td>${escapeHtml(user.fullName)}</td><td>${escapeHtml(user.email)}</td><td><select data-role="${user._id}">${["Admin", "Manager", "SalesExecutive"].map(role => `<option ${user.role === role ? "selected" : ""}>${role}</option>`).join("")}</select></td><td>${user.isActive ? "Active" : "Inactive"}</td><td><button class="text-action save-user" data-id="${user._id}">Save role</button><button class="text-action toggle-user" data-id="${user._id}" data-active="${user.isActive}">${user.isActive ? "Deactivate" : "Activate"}</button><button class="text-action reset-user" data-id="${user._id}">Issue reset link</button>${user._id !== state.user?._id ? `<button class="text-action danger delete-user" data-id="${user._id}" data-name="${escapeHtml(user.fullName)}">Remove</button>` : ""}</td></tr>`).join("")}</tbody></table>`;
     document.querySelectorAll(".save-user").forEach(button => button.addEventListener("click", async () => {
       const role = document.querySelector(`[data-role="${button.dataset.id}"]`).value;
       try { await api(`/auth/users/${button.dataset.id}`, { method: "PATCH", body: JSON.stringify({ role }) }); showNotice("User role updated."); }
@@ -420,6 +420,14 @@ async function loadUsers() {
       try {
         const result = await api(`/auth/users/${button.dataset.id}/reset-link`, { method: "POST", body: "{}" });
         prompt("Share this one-hour password reset link through a trusted channel:", new URL(result.resetUrl, window.location.origin).href);
+      } catch (error) { showNotice(error.message, "error"); }
+    }));
+    document.querySelectorAll(".delete-user").forEach(button => button.addEventListener("click", async () => {
+      if (!confirm(`Are you sure you want to remove user "${button.dataset.name}"?`)) return;
+      try {
+        await api(`/auth/users/${button.dataset.id}`, { method: "DELETE" });
+        showNotice(`User "${button.dataset.name}" removed successfully.`);
+        loadUsers();
       } catch (error) { showNotice(error.message, "error"); }
     }));
   } catch (error) { $("#users-table").innerHTML = `<div class="notice error">${escapeHtml(error.message)}</div>`; }

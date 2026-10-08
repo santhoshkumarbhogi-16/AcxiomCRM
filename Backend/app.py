@@ -615,6 +615,30 @@ def register_routes(app: Flask) -> None:
         log_audit("PasswordResetLinkIssued", "User", user_id)
         return jsonify(resetUrl=f"/?resetUser={user_id}&resetToken={token}", expiresAt=expires_at)
 
+    @app.delete("/api/auth/users/<user_id>")
+    @roles_required("Admin")
+    def delete_user(user_id: str):
+        if not valid_id(user_id):
+            return fail("Invalid user ID.")
+        user = db().execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+        if user is None:
+            return fail("User not found.", 404)
+        if user_id == g.user["_id"]:
+            return fail("You cannot delete your own administrator account.")
+        if user["role"] == "Admin":
+            count = db().execute("SELECT COUNT(*) AS count FROM users WHERE role = 'Admin' AND isActive = 1").fetchone()["count"]
+            if count <= 1:
+                return fail("The last active administrator cannot be deleted.")
+        db().execute("UPDATE customers SET createdBy = NULL WHERE createdBy = ?", (user_id,))
+        for table in ["customers", "leads", "opportunities", "followups", "activities"]:
+            db().execute(f"UPDATE {table} SET assignedTo = NULL WHERE assignedTo = ?", (user_id,))
+        db().execute("PRAGMA foreign_keys = OFF;")
+        db().execute("DELETE FROM users WHERE id = ?", (user_id,))
+        db().execute("PRAGMA foreign_keys = ON;")
+        db().commit()
+        log_audit("Delete", "User", user_id, f"{user['fullName']} ({user['email']})")
+        return jsonify(message="User removed successfully.")
+
     @app.get("/api/dashboard")
     @login_required
     def dashboard():
@@ -685,6 +709,7 @@ def register_routes(app: Flask) -> None:
             "/api/auth/logout": ["post"],
             "/api/auth/me": ["get"],
             "/api/auth/users": ["get", "post"],
+            "/api/auth/users/{id}": ["patch", "delete"],
             "/api/dashboard": ["get"],
             "/api/customers": ["get", "post"],
             "/api/customers/{id}": ["get", "put", "delete"],
